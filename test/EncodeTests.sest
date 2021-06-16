@@ -1,0 +1,36 @@
+import Encode
+
+module EncodeTests = #[test] struct
+  open Stdlib
+
+  val single(t) =
+    Testing.it("run", fun() ->
+      assert Testing.equal(
+        -expect t.expected,
+        -got Encode.run(t.input),
+      )
+    end)
+
+  #[test]
+  val run_test() =
+    Testing.list(
+      List.map(single, [
+        {
+          input    = Encode.bool(true),
+          expected = "true",
+        },
+        {
+          input    = Encode.int(42),
+          expected = "42",
+        },
+        {
+          input    = Encode.list([Encode.int(42), Encode.int(57)]),
+          expected = "[42,57]",
+        },
+        {
+          input    = Encode.object(RawMap.from_list([{"foo", Encode.int(42)}, {"bar", Encode.string("toto")}])),
+          expected = "{\"bar\":\"toto\",\"foo\":42}"
+        },
+      ])
+    )
+end

@@ -1,0 +1,25 @@
+module Encode = struct
+  open Stdlib
+
+  type t = RawValue.t
+
+  val bool(b : bool) : t =
+    RawValue.forget(b)
+
+  val int(n : int) : t =
+    RawValue.forget(n)
+
+  val string(s : binary) =
+    RawValue.forget(s)
+
+  val list(vs : list<t>) : t =
+    RawValue.forget(vs)
+
+  val object(map : RawMap.t<binary, t>) : t =
+    RawValue.forget(map)
+
+  val run : fun(t) -> binary = external 1 ```
+    run(Obj) ->
+        jsone:encode(Obj).
+  ```
+end

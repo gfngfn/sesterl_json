@@ -1,6 +1,9 @@
 import Decode
+import Encode
 
 module Json :> sig
+  open Stdlib
+
   module Decode : sig
     type t :: (o) -> o
     type error =
@@ -20,6 +23,17 @@ module Json :> sig
     val bind<$a, $b> : fun(t<$a>, fun($a) -> t<$b>) -> t<$b>
     val run<$a> : fun(t<$a>, binary) -> result<$a, error>
   end
+
+  module Encode : sig
+    type t :: o
+    val bool : fun(bool) -> t
+    val int : fun(int) -> t
+    val string : fun(binary) -> t
+    val list : fun(list<t>) -> t
+    val object : fun(RawMap.t<binary, t>) -> t
+    val run : fun(t) -> binary
+  end
 end = struct
   module Decode = Decode
+  module Encode = Encode
 end
