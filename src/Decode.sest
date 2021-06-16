@@ -3,6 +3,7 @@ module Decode = struct
 
   type error =
     | NotAValidJson
+    | NotABoolean
     | NotAnInteger
     | NotAString
     | MissingField(binary)
@@ -12,6 +13,16 @@ module Decode = struct
 
   val succeed<$a>(v : $a) : t<$a> =
     fun(obj) -> Ok(v) end
+
+  val bool : fun() -> t<bool> = external 0 ```
+    bool() ->
+        fun(Obj) ->
+            if
+                erlang:is_boolean(Obj) -> {ok, Obj};
+                true                   -> {error, not_a_boolean}
+            end
+        end.
+  ```
 
   val int : fun() -> t<int> = external 0 ```
     int() ->

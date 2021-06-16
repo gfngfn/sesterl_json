@@ -5,10 +5,12 @@ module Json :> sig
     type t :: (o) -> o
     type error =
       | NotAValidJson
+      | NotABoolean
       | NotAnInteger
       | NotAString
       | MissingField(binary)
     val succeed<$a> : fun($a) -> t<$a>
+    val bool : fun() -> t<bool>
     val int : fun() -> t<int>
     val string : fun() -> t<binary>
     val bind<$a, $b> : fun(t<$a>, fun($a) -> t<$b>) -> t<$b>

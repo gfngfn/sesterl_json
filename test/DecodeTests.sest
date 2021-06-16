@@ -3,64 +3,70 @@ import Decode
 module DecodeTests = #[test] struct
   open Stdlib
 
+  val single(t) =
+    Testing.it("run", fun() ->
+      assert Testing.equal(
+        -expect t.expected,
+        -got Decode.run(t.decoder, t.input),
+      )
+    end)
+
+  #[test]
+  val bool_test() =
+    Testing.list(
+      List.map(single, [
+        {
+          input    = "false",
+          decoder  = Decode.bool(),
+          expected = Ok(false),
+        },
+        {
+          input    = "{\"foo\": true}",
+          decoder  = Decode.field("foo", Decode.bool()),
+          expected = Ok(true),
+        },
+      ]))
+
   #[test]
   val int_test() =
     Testing.list(
-      List.map(
-        fun(t) ->
-          Testing.it("run", fun() ->
-            assert Testing.equal(
-              -expect t.expected,
-              -got Decode.run(t.decoder, t.input),
-            )
-          end)
-        end,
-        [
-          {
-            input    = "42",
-            decoder  = Decode.int(),
-            expected = Ok(42),
-          },
-          {
-            input    = "{\"foo\": 42}",
-            decoder  = Decode.field("foo", Decode.int()),
-            expected = Ok(42),
-          },
-          {
-            input    = "{\"foo\": \"toto\"}",
-            decoder  = Decode.field("foo", Decode.int()),
-            expected = Error(Decode.NotAnInteger),
-          },
-          {
-            input    = "{\"bar\": 42}",
-            decoder  = Decode.field("foo", Decode.int()),
-            expected = Error(Decode.MissingField("foo")),
-          },
-        ]))
+      List.map(single, [
+        {
+          input    = "42",
+          decoder  = Decode.int(),
+          expected = Ok(42),
+        },
+        {
+          input    = "{\"foo\": 42}",
+          decoder  = Decode.field("foo", Decode.int()),
+          expected = Ok(42),
+        },
+        {
+          input    = "{\"foo\": \"toto\"}",
+          decoder  = Decode.field("foo", Decode.int()),
+          expected = Error(Decode.NotAnInteger),
+        },
+        {
+          input    = "{\"bar\": 42}",
+          decoder  = Decode.field("foo", Decode.int()),
+          expected = Error(Decode.MissingField("foo")),
+        },
+      ]))
 
   #[test]
   val string_test() =
     Testing.list(
-      List.map(
-        fun(t) ->
-          Testing.it("run", fun() ->
-            assert Testing.equal(
-              -expect t.expected,
-              -got Decode.run(t.decoder, t.input),
-            )
-          end)
-        end,
-        [
-          {
-            input    = "\"toto\"",
-            decoder  = Decode.string(),
-            expected = Ok("toto"),
-          },
-          {
-            input    = "{\"foo\": \"toto\"}",
-            decoder  = Decode.field("foo", Decode.string()),
-            expected = Ok("toto"),
-          },
-        ]))
+      List.map(single, [
+        {
+          input    = "\"toto\"",
+          decoder  = Decode.string(),
+          expected = Ok("toto"),
+        },
+        {
+          input    = "{\"foo\": \"toto\"}",
+          decoder  = Decode.field("foo", Decode.string()),
+          expected = Ok("toto"),
+        },
+      ]))
 
 end
