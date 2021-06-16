@@ -44,6 +44,34 @@ module Decode = struct
         end.
   ```
 
+  val list_impl<$a>(d : t<$a>, objs : list<RawValue.t>) : result<list<$a>, error> =
+    case
+      List.foldl(
+        fun(res, obj) ->
+          Result.bind(res, fun(acc) ->
+            Result.bind(d(obj), fun(v) ->
+              Ok(v :: acc)
+            end)
+          end)
+        end,
+        Ok([]),
+        objs)
+    of
+    | Ok(acc)  -> Ok(List.reverse(acc))
+    | Error(e) -> Error(e)
+    end
+
+  val list<$a> : fun(t<$a>) -> t<list<$a>> = external 1 ```
+    list(Decoder) ->
+        fun(Obj) ->
+            try
+                list_impl(Decoder, Obj)
+            catch
+                _:_ -> {error, not_a_list}
+            end
+        end.
+  ```
+
   val bind<$a, $b>(d1 : t<$a>, d2f : fun($a) -> t<$b>) : t<$b> =
     fun(obj) ->
       case d1(obj) of

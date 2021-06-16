@@ -69,4 +69,19 @@ module DecodeTests = #[test] struct
         },
       ]))
 
+  #[test]
+  val int_list_test() =
+    Testing.list(
+      List.map(single, [
+        {
+          input    = "[3, 1, 4]",
+          decoder  = Decode.list(Decode.int()),
+          expected = Ok([3, 1, 4]),
+        },
+        {
+          input    = "[{\"bar\": 3}, {\"bar\": 1}, {\"bar\": 4}]",
+          decoder  = Decode.list(Decode.field("bar", Decode.int())),
+          expected = Ok([3, 1, 4]),
+        },
+      ]))
 end

@@ -13,6 +13,7 @@ module Json :> sig
     val bool : fun() -> t<bool>
     val int : fun() -> t<int>
     val string : fun() -> t<binary>
+    val list<$a> : fun(t<$a>) -> t<list<$a>>
     val bind<$a, $b> : fun(t<$a>, fun($a) -> t<$b>) -> t<$b>
     val run<$a> : fun(t<$a>, binary) -> result<$a, error>
   end
