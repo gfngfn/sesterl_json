@@ -25,6 +25,16 @@ module DecodeTests = #[test] struct
           decoder  = Decode.field("foo", Decode.bool()),
           expected = Ok(true),
         },
+        {
+          input    = "{\"foo\": true",
+          decoder  = Decode.field("foo", Decode.bool()),
+          expected = Error(Decode.NotAValidJson),
+        },
+        {
+          input    = "yes",
+          decoder  = Decode.bool(),
+          expected = Error(Decode.NotAValidJson),
+        },
       ]))
 
   #[test]
@@ -82,6 +92,16 @@ module DecodeTests = #[test] struct
           input    = "[{\"bar\": 3}, {\"bar\": 1}, {\"bar\": 4}]",
           decoder  = Decode.list(Decode.field("bar", Decode.int())),
           expected = Ok([3, 1, 4]),
+        },
+        {
+          input    = "3",
+          decoder  = Decode.list(Decode.int()),
+          expected = Error(Decode.NotAnArray),
+        },
+        {
+          input    = "[3, [1]]",
+          decoder  = Decode.list(Decode.int()),
+          expected = Error(Decode.NotAnInteger),
         },
       ]))
 

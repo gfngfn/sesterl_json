@@ -8,6 +8,7 @@ module Json :> sig
       | NotABoolean
       | NotAnInteger
       | NotAString
+      | NotAnArray
       | MissingField(binary)
     val pure<$a> : fun($a) -> t<$a>
     val bool : fun() -> t<bool>

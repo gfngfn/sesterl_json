@@ -6,6 +6,7 @@ module Decode = struct
     | NotABoolean
     | NotAnInteger
     | NotAString
+    | NotAnArray
     | MissingField(binary)
 
   type t<$a> =
@@ -67,7 +68,7 @@ module Decode = struct
             try
                 list_impl(Decoder, Obj)
             catch
-                _:_ -> {error, not_a_list}
+                _:_ -> {error, not_an_array}
             end
         end.
   ```
