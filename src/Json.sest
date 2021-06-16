@@ -9,11 +9,13 @@ module Json :> sig
       | NotAnInteger
       | NotAString
       | MissingField(binary)
-    val succeed<$a> : fun($a) -> t<$a>
+    val pure<$a> : fun($a) -> t<$a>
     val bool : fun() -> t<bool>
     val int : fun() -> t<int>
     val string : fun() -> t<binary>
     val list<$a> : fun(t<$a>) -> t<list<$a>>
+    val map<$a, $b> : fun(fun($a) -> $b, t<$a>) -> t<$b>
+    val map2<$a1, $a2, $b> : fun(fun($a1, $a2) -> $b, t<$a1>, t<$a2>) -> t<$b>
     val bind<$a, $b> : fun(t<$a>, fun($a) -> t<$b>) -> t<$b>
     val run<$a> : fun(t<$a>, binary) -> result<$a, error>
   end

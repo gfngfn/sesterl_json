@@ -11,7 +11,7 @@ module Decode = struct
   type t<$a> =
     fun(RawValue.t) -> result<$a, error>
 
-  val succeed<$a>(v : $a) : t<$a> =
+  val pure<$a>(v : $a) : t<$a> =
     fun(obj) -> Ok(v) end
 
   val bool : fun() -> t<bool> = external 0 ```
@@ -95,6 +95,20 @@ module Decode = struct
       | Some(obj1) -> d(obj1)
       | None       -> Error(MissingField(key))
       end
+    end
+
+  val map<$a, $b>(f : fun($a) -> $b, d : t<$a>) : t<$b> =
+    fun(obj) ->
+      Result.map(f, d(obj))
+    end
+
+  val map2<$a1, $a2, $b>(f : fun($a1, $a2) -> $b, d1 : t<$a1>, d2 : t<$a2>) : t<$b> =
+    fun(obj) ->
+      Result.bind(d1(obj), fun(v1) ->
+        Result.bind(d2(obj), fun(v2) ->
+          Ok(f(v1, v2))
+        end)
+      end)
     end
 
   val decode_impl : fun(binary) -> option<RawValue.t> = external 1 ```

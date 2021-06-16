@@ -84,4 +84,55 @@ module DecodeTests = #[test] struct
           expected = Ok([3, 1, 4]),
         },
       ]))
+
+  #[test]
+  val bind_test() =
+    single({
+      input =
+        "{\"foo\": 42, \"bar\": \"toto\"}",
+      decoder =
+        Decode.bind(
+          Decode.field("foo", Decode.int()),
+          fun(n) ->
+            Decode.bind(
+              Decode.field("bar", Decode.string()),
+              fun(s) ->
+                Decode.pure({n, s})
+              end
+            )
+          end
+        ),
+      expected =
+        Ok({42, "toto"})
+    })
+
+  #[test]
+  val map_test() =
+    single({
+      input =
+        "{\"foo\": 42, \"bar\": \"toto\"}",
+      decoder =
+        Decode.map(
+          fun(n) -> n * 2 end,
+          Decode.field("foo", Decode.int()),
+        ),
+      expected =
+        Ok(84)
+    })
+
+  #[test]
+  val map2_test() =
+    single({
+      input =
+        "{\"foo\": 42, \"bar\": \"toto\"}",
+      decoder =
+        Decode.map2(
+          fun(n, s) -> {n, s} end,
+          Decode.field("foo", Decode.int()),
+          Decode.field("bar", Decode.string()),
+        ),
+      expected =
+        Ok({42, "toto"})
+    })
+
 end
