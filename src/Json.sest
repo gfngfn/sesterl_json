@@ -6,8 +6,11 @@ module Json :> sig
     type error =
       | NotAValidJson
       | NotAnInteger
+      | NotAString
       | MissingField(binary)
     val succeed<$a> : fun($a) -> t<$a>
+    val int : fun() -> t<int>
+    val string : fun() -> t<binary>
     val bind<$a, $b> : fun(t<$a>, fun($a) -> t<$b>) -> t<$b>
     val run<$a> : fun(t<$a>, binary) -> result<$a, error>
   end

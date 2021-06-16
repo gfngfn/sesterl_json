@@ -4,7 +4,7 @@ module DecodeTests = #[test] struct
   open Stdlib
 
   #[test]
-  val run_test() =
+  val int_test() =
     Testing.list(
       List.map(
         fun(t) ->
@@ -30,6 +30,37 @@ module DecodeTests = #[test] struct
             input    = "{\"foo\": \"toto\"}",
             decoder  = Decode.field("foo", Decode.int()),
             expected = Error(Decode.NotAnInteger),
-          }
+          },
+          {
+            input    = "{\"bar\": 42}",
+            decoder  = Decode.field("foo", Decode.int()),
+            expected = Error(Decode.MissingField("foo")),
+          },
         ]))
+
+  #[test]
+  val string_test() =
+    Testing.list(
+      List.map(
+        fun(t) ->
+          Testing.it("run", fun() ->
+            assert Testing.equal(
+              -expect t.expected,
+              -got Decode.run(t.decoder, t.input),
+            )
+          end)
+        end,
+        [
+          {
+            input    = "\"toto\"",
+            decoder  = Decode.string(),
+            expected = Ok("toto"),
+          },
+          {
+            input    = "{\"foo\": \"toto\"}",
+            decoder  = Decode.field("foo", Decode.string()),
+            expected = Ok("toto"),
+          },
+        ]))
+
 end

@@ -4,6 +4,7 @@ module Decode = struct
   type error =
     | NotAValidJson
     | NotAnInteger
+    | NotAString
     | MissingField(binary)
 
   type t<$a> =
@@ -18,6 +19,16 @@ module Decode = struct
             if
                 erlang:is_integer(Obj) -> {ok, Obj};
                 true                   -> {error, not_an_integer}
+            end
+        end.
+  ```
+
+  val string : fun() -> t<binary> = external 0 ```
+    string() ->
+        fun(Obj) ->
+            if
+                erlang:is_binary(Obj) -> {ok, Obj};
+                true                  -> {error, not_a_string}
             end
         end.
   ```
