@@ -1,0 +1,15 @@
+import Decode
+
+module DecodeTests = #[test] struct
+
+  #[test]
+  val run_test() =
+    Testing.it("run", fun() ->
+      let d = Decode.field("foo", Decode.int()) in
+      assert Testing.equal(
+        -expect Ok(42),
+        -got Decode.run(d, "{\"foo\": 42}"),
+      )
+    end)
+
+end

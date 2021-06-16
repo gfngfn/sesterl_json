@@ -1,0 +1,16 @@
+import Decode
+
+module Json :> sig
+  module Decode : sig
+    type t :: (o) -> o
+    type error =
+      | NotAValidJson
+      | NotAnInteger
+      | MissingField(binary)
+    val succeed<$a> : fun($a) -> t<$a>
+    val bind<$a, $b> : fun(t<$a>, fun($a) -> t<$b>) -> t<$b>
+    val run<$a> : fun(t<$a>, binary) -> result<$a, error>
+  end
+end = struct
+  module Decode = Decode
+end

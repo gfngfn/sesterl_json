@@ -1,0 +1,65 @@
+module Decode = struct
+  open Stdlib
+
+  type error =
+    | NotAValidJson
+    | NotAnInteger
+    | MissingField(binary)
+
+  type t<$a> =
+    fun(RawValue.t) -> result<$a, error>
+
+  val succeed<$a>(v : $a) : t<$a> =
+    fun(obj) -> Ok(v) end
+
+  val int : fun() -> t<int> = external 0 ```
+    int() ->
+        fun(Obj) ->
+            if
+                erlang:is_integer(Obj) -> {ok, Obj};
+                true                   -> {error, not_an_integer}
+            end
+        end.
+  ```
+
+  val bind<$a, $b>(d1 : t<$a>, d2f : fun($a) -> t<$b>) : t<$b> =
+    fun(obj) ->
+      case d1(obj) of
+      | Ok(v)    -> d2f(v)(obj)
+      | Error(e) -> Error(e)
+      end
+    end
+
+  val field_impl : fun(binary, RawValue.t) -> option<RawValue.t> = external 2 ```
+    field_impl(Key, Obj) ->
+        try
+            {ok, maps:get(Key, Obj)}
+        catch
+            _:_ -> error
+        end.
+  ```
+
+  val field<$a>(key : binary, d : t<$a>) : t<$a> =
+    fun(obj0) ->
+      case field_impl(key, obj0) of
+      | Some(obj1) -> d(obj1)
+      | None       -> Error(MissingField(key))
+      end
+    end
+
+  val decode_impl : fun(binary) -> option<RawValue.t> = external 1 ```
+    decode_impl(Bin) ->
+        try
+            {ok, jsone:decode(Bin)}
+        catch
+            _:_ -> error
+        end.
+  ```
+
+  val run<$a>(d : t<$a>, s : binary) =
+    case decode_impl(s) of
+    | Some(obj) -> d(obj)
+    | None      -> Error(NotAValidJson)
+    end
+
+end
