@@ -1,15 +1,35 @@
 import Decode
 
 module DecodeTests = #[test] struct
+  open Stdlib
 
   #[test]
   val run_test() =
-    Testing.it("run", fun() ->
-      let d = Decode.field("foo", Decode.int()) in
-      assert Testing.equal(
-        -expect Ok(42),
-        -got Decode.run(d, "{\"foo\": 42}"),
-      )
-    end)
-
+    Testing.list(
+      List.map(
+        fun(t) ->
+          Testing.it("run", fun() ->
+            assert Testing.equal(
+              -expect t.expected,
+              -got Decode.run(t.decoder, t.input),
+            )
+          end)
+        end,
+        [
+          {
+            input    = "42",
+            decoder  = Decode.int(),
+            expected = Ok(42),
+          },
+          {
+            input    = "{\"foo\": 42}",
+            decoder  = Decode.field("foo", Decode.int()),
+            expected = Ok(42),
+          },
+          {
+            input    = "{\"foo\": \"toto\"}",
+            decoder  = Decode.field("foo", Decode.int()),
+            expected = Error(Decode.NotAnInteger),
+          }
+        ]))
 end
