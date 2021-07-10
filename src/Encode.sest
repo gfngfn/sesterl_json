@@ -18,6 +18,10 @@ module Encode = struct
   val object(map : RawMap.t<binary, t>) : t =
     RawValue.forget(map)
 
+  val object_from_list(list : list<{binary, t}>) =
+    let map = RawMap.from_list(list) in
+    RawValue.forget(map)
+
   val run : fun(t) -> binary = external 1 ```
     run(Obj) ->
         jsone:encode(Obj).
