@@ -16,6 +16,7 @@ module Json :> sig
       | Failure(binary)
     val pure<$a> : fun($a) -> t<$a>
     val fail<$a> : fun(binary) -> t<$a>
+    val field<$a> : fun(binary, t<$a>) -> t<$a>
     val bool : fun() -> t<bool>
     val int : fun() -> t<int>
     val string : fun() -> t<binary>
