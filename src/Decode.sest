@@ -8,12 +8,16 @@ module Decode = struct
     | NotAString
     | NotAnArray
     | MissingField(binary)
+    | Failure(binary)
 
   type t<$a> =
     fun(RawValue.t) -> result<$a, error>
 
   val pure<$a>(v : $a) : t<$a> =
     fun(obj) -> Ok(v) end
+
+  val fail<$a>(msg : binary) : t<$a> =
+    fun(obj) -> Error(Failure(msg)) end
 
   val bool : fun() -> t<bool> = external 0 ```
     bool() ->

@@ -13,7 +13,9 @@ module Json :> sig
       | NotAString
       | NotAnArray
       | MissingField(binary)
+      | Failure(binary)
     val pure<$a> : fun($a) -> t<$a>
+    val fail<$a> : fun(binary) -> t<$a>
     val bool : fun() -> t<bool>
     val int : fun() -> t<int>
     val string : fun() -> t<binary>
