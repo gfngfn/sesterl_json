@@ -1,6 +1,6 @@
 {application, sesterl_json, [
     {description, "A JSON-handling library for Sesterl"},
-    {vsn, "0.0.1"},
+    {vsn, "0.0.2"},
     {registered, []},
     {modules, []},
     {applications, [
