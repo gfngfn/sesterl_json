@@ -2,7 +2,7 @@
 [{<<"jsone">>,{pkg,<<"jsone">>,<<"1.5.7">>},0},
  {<<"sesterl_stdlib">>,
   {git,"https://github.com/gfngfn/sesterl_stdlib",
-       {ref,"76d08158bc8e5108ed933d280c51dc37c7c08d2d"}},
+       {ref,"e6f84aea98e6fc78392abc9a942fdd065cd4d1cd"}},
   0}]}.
 [
 {pkg_hash,[
